@@ -1,0 +1,102 @@
+<!--Попурей НД 02.09.2021-->
+
+<!--API ключ карты-->
+<!--49bbedfc-23e9-4bfa-a642-57d4cf762d7e--> 
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<!--bootstrap 4-->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+	<!---->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=5f186667-42f6-4826-b885-83292606abf2&lang=ru_RU" type="text/javascript"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<script type="text/javascript">
+
+		var myMap;
+		var url_co="http://1c-devs.rauit.ru/mappa_MobileServer_kochnev/hs/tracking/tracks?id=100"; // Адрес API откуда приходят точки
+
+		var courier_lat; // Координата ширина курьера
+		var courier_lon; // Координата долгота курьера
+		var finish_lat;  // Координата ширина точки куда доставить
+		var finish_lon;  // Координата долгота точки куда доставить
+		var message_1;
+		var message_2;
+
+		$.getJSON(url_co, function(data) {
+			// Получаем инфу от запроса ----------
+			 courier_lat=data.message.courier.lat;
+			 courier_lon=data.message.courier.lon;
+			 finish_lat=data.message.finish.lat;
+			 finish_lon=data.message.finish.lon;
+			 message_1=data.message.description1;
+			 message_2=data.message.description2; 
+			// -------------------------
+
+			ymaps.ready(init); // Выполнение инициализации карты после зыгрузки страницы 
+				});
+
+			
+
+				
+			
+        function init(){ 
+
+             myMap = new ymaps.Map("map", { // Инициализация карты
+			   center:[(courier_lat+finish_lat)/2,(courier_lon+finish_lon)/2],
+                zoom: 14,
+				controls:[]
+            });
+
+        
+
+		var Courier_metka = new ymaps.Placemark([courier_lat, courier_lon], {}, { // Отображение метки курьера
+   		 iconLayout: 'default#image',
+    	iconImageHref: '1.png', 	 // Расположение картинки
+    	iconImageSize: [50, 50],	 // Размер картинки
+		});
+
+
+		var Finish_metka = new ymaps.Placemark([finish_lat, finish_lon], {}, { // Отображение метку курьера
+   		 iconLayout: 'default#image',
+    	iconImageHref: '2.png', 	 // Расположение картинки
+    	iconImageSize: [50, 50],	 // Размер картинки
+		});
+
+
+		myMap.geoObjects.add(Courier_metka) // Добавляем на карту метки
+		myMap.geoObjects.add(Finish_metka)
+
+		document.getElementById('exampleFormControlTextarea1').value =message_1;
+		document.getElementById('exampleFormControlTextarea2').value =message_2;
+
+	}
+    </script>
+</head>
+
+<body>
+
+	
+	
+		<div class="mb-3" style="margin-top:30px;">
+			<textarea style="font-weight:bold; font-size: 50pt; text-align: center;" class="form-control" id="exampleFormControlTextarea1" rows="1" readonly></textarea>
+		  </div>
+	  </div>
+
+		<div class="mb-3">
+			<textarea  style=" font-size: 25pt; " class="form-control" id="exampleFormControlTextarea2" rows="2" readonly></textarea>
+		  </div>
+	  </div>
+
+
+
+    <div id="map" style="width: 100%; height:70vh "></div>
+
+		
+	</div>
+</body>
+
+</html>
